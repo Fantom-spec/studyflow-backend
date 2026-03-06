@@ -130,6 +130,7 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 
+init_db()  # runs on startup whether gunicorn or direct
+
 if __name__ == "__main__":
-    init_db()
     app.run(host="0.0.0.0", port=5050, debug=True)
