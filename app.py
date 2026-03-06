@@ -126,7 +126,7 @@ def delete_task(task_id):
 
 
 @app.route("/")
-def health():
+def status():
     return jsonify({"status": "ok"}), 200
 
 
