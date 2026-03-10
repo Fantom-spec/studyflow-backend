@@ -69,7 +69,7 @@ def add_task():
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO tasks (id, title, type, , subject, date, "createdAt") '
+                    'INSERT INTO tasks (id, title, type, subject, date, "createdAt") '
                     'VALUES (%(id)s, %(title)s, %(type)s, %(subject)s, %(date)s, %(createdAt)s)',
                     new_task,
                 )
