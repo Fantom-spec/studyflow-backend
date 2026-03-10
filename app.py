@@ -24,7 +24,6 @@ def init_db():
                     id        TEXT PRIMARY KEY,
                     title     TEXT NOT NULL,
                     type      TEXT NOT NULL,
-                    status    TEXT NOT NULL,
                     subject   TEXT NOT NULL,
                     date      TEXT NOT NULL,
                     "createdAt" BIGINT NOT NULL
@@ -53,7 +52,7 @@ def add_task():
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    for key in ["title", "type", "status", "subject", "date"]:
+    for key in ["title", "type","subject", "date"]:
         if key not in data:
             return jsonify({"error": f"Missing field: {key}"}), 400
 
@@ -61,7 +60,6 @@ def add_task():
         "id": datetime.now().strftime("%Y%m%d%H%M%S") + str(abs(hash(data["title"])))[:6],
         "title": data["title"],
         "type": data["type"],
-        "status": data["status"],
         "subject": data["subject"],
         "date": data["date"],
         "createdAt": int(datetime.now().timestamp() * 1000),
@@ -71,8 +69,8 @@ def add_task():
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO tasks (id, title, type, status, subject, date, "createdAt") '
-                    'VALUES (%(id)s, %(title)s, %(type)s, %(status)s, %(subject)s, %(date)s, %(createdAt)s)',
+                    'INSERT INTO tasks (id, title, type, , subject, date, "createdAt") '
+                    'VALUES (%(id)s, %(title)s, %(type)s, %(subject)s, %(date)s, %(createdAt)s)',
                     new_task,
                 )
             conn.commit()
@@ -87,7 +85,7 @@ def update_task(task_id):
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
-    fields = {k: data[k] for k in ["title", "type", "status", "subject", "date"] if k in data}
+    fields = {k: data[k] for k in ["title", "type", "subject", "date"] if k in data}
     if not fields:
         return jsonify({"error": "No valid fields to update"}), 400
 
