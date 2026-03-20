@@ -33,7 +33,7 @@ def init_db():
                 CREATE TABLE IF NOT EXISTS ideas (
                     id          TEXT PRIMARY KEY,
                     title       TEXT NOT NULL,
-                    desc        TEXT NOT NULL DEFAULT '',
+                    "desc"      TEXT NOT NULL DEFAULT '',
                     status      TEXT NOT NULL DEFAULT 'idea',
                     priority    TEXT NOT NULL DEFAULT 'medium',
                     tags        TEXT NOT NULL DEFAULT '',
@@ -175,7 +175,7 @@ def add_idea():
         with get_db() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    'INSERT INTO ideas (id, title, desc, status, priority, tags, "createdAt") '
+                    'INSERT INTO ideas (id, title, "desc", status, priority, tags, "createdAt") '
                     'VALUES (%(id)s, %(title)s, %(desc)s, %(status)s, %(priority)s, %(tags)s, %(createdAt)s)',
                     new_idea,
                 )
@@ -202,7 +202,9 @@ def update_idea(idea_id):
     if not fields:
         return jsonify({"error": "No valid fields to update"}), 400
 
-    set_clause = ", ".join(f"{k} = %({k})s" for k in fields)
+    # "desc" is reserved in PostgreSQL — quote it in the SET clause
+    RESERVED = {"desc"}
+    set_clause = ", ".join(f'"{k}" = %({k})s' if k in RESERVED else f"{k} = %({k})s" for k in fields)
     fields["idea_id"] = idea_id
     try:
         with get_db() as conn:
